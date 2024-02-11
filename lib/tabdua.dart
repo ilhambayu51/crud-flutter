@@ -13,7 +13,7 @@ class _MySecondPageState extends State<MySecondPage> {
   TextEditingController namaController = TextEditingController();
   TextEditingController nimController = TextEditingController();
   TextEditingController prodiController = TextEditingController();
-  TextEditingController nilaiUasController = TextEditingController();
+  TextEditingController nilaiUtsController = TextEditingController();
 
   @override
   void initState() {
@@ -22,44 +22,44 @@ class _MySecondPageState extends State<MySecondPage> {
   }
 
   //get data
-  List<Map<String, dynamic>> nilaimhs = [];
+  List<Map<String, dynamic>> nilaiutsmhs = [];
 
   void refreshnilai() async {
-    final data = await SQLHelper.getNilaiMhs();
+    final data = await SQLHelperSec.getNilaiUtsMhs();
     setState(() {
-      nilaimhs = data;
+      nilaiutsmhs = data;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print(nilaimhs);
+    print(nilaiutsmhs);
     return Scaffold(
       body: ListView.builder(
-        itemCount: nilaimhs.length,
+        itemCount: nilaiutsmhs.length,
         itemBuilder: (context, index) => Card(
         margin: const EdgeInsets.all(15),
         child: ListTile(
-          title: Text(nilaimhs[index]['nama']),
+          title: Text(nilaiutsmhs[index]['nama']),
             subtitle: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(nilaimhs[index]['nim']),
-                Text(nilaimhs[index]['prodi']),
-                Text(nilaimhs[index]['nilaiUas']),
+                Text(nilaiutsmhs[index]['nim']),
+                Text(nilaiutsmhs[index]['prodi']),
+                Text(nilaiutsmhs[index]['nilaiUts']),
               ],
             ),
           trailing: SizedBox(width: 100, 
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () => modalForm(nilaimhs[index]['id']), 
+                  onPressed: () => modalForm(nilaiutsmhs[index]['id']), 
                   icon: const Icon(Icons.edit)
                 ),
                 IconButton(
                    icon: Icon(Icons.delete),
-                   onPressed: () => deleteNilai(nilaimhs[index]['id'])
+                   onPressed: () => deleteNilai(nilaiutsmhs[index]['id'])
                 ),
               ],
             )
@@ -77,34 +77,34 @@ class _MySecondPageState extends State<MySecondPage> {
 
   //input data
   Future<void> tambahNilai() async {
-    await SQLHelper.inputNilai(
-      namaController.text, nimController.text, prodiController.text, nilaiUasController.text
+    await SQLHelperSec.inputNilai(
+      namaController.text, nimController.text, prodiController.text, nilaiUtsController.text
     );
     refreshnilai();
   }
 
   //update data
   Future<void> updateNilai(int id) async {
-    await SQLHelper.updateNilai(
-      id, namaController.text, nimController.text, prodiController.text, nilaiUasController.text
+    await SQLHelperSec.updateNilai(
+      id, namaController.text, nimController.text, prodiController.text, nilaiUtsController.text
     );
     refreshnilai();
   }
 
   //delete data
   Future<void> deleteNilai(int id) async {
-    await SQLHelper.deleteNilai(id);
+    await SQLHelperSec.deleteNilai(id);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Success Delete Data")));
     refreshnilai();
   }
 
   void modalForm(int? id) async {
     if(id != null) {
-      final datanilai = nilaimhs.firstWhere((element) => element['id'] == id);
+      final datanilai = nilaiutsmhs.firstWhere((element) => element['id'] == id);
       namaController.text = datanilai['nama'];
       nimController.text = datanilai['nim'];
       prodiController.text = datanilai['prodi'];
-      nilaiUasController.text = datanilai['nilaiUas'];
+      nilaiUtsController.text = datanilai['nilaiUts'];
     }
     showModalBottomSheet(
       context: context,
@@ -137,7 +137,7 @@ class _MySecondPageState extends State<MySecondPage> {
           height: 10,
         ),
         TextField(
-          controller: nilaiUasController,
+          controller: nilaiUtsController,
           decoration: const InputDecoration(hintText: 'Nilai Uas'),
         ),
         const SizedBox(
@@ -153,7 +153,7 @@ class _MySecondPageState extends State<MySecondPage> {
           namaController.text = '';
           nimController.text = '';
           prodiController.text = '';
-          nilaiUasController.text = '';
+          nilaiUtsController.text = '';
           Navigator.pop(context);
         },
         child: Text(id == null ? 'tambah' : 'udpate'))
